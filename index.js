@@ -129,6 +129,10 @@ const move = () => {
     clearInterval(movingIntervalId);
     intervalTime *= speedIncrease;
     movingIntervalId = setInterval(move, intervalTime);
+    cells[head].classList.add("explode");
+    cells[head].addEventListener("animationend", () => {
+      cells[head].classList.remove("explode");
+    });
     return;
   }
   createSnake();
