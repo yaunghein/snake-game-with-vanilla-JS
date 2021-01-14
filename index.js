@@ -1,5 +1,6 @@
 const boardSize = document.getElementById("board-size");
 const generateBoardBtn = document.getElementsByClassName("generate-board-btn")[0];
+const guideText = document.getElementsByClassName("guide-text")[0];
 const gameBoard = document.getElementById("game-board");
 const startBtn = document.getElementsByClassName("start-btn")[0];
 const totalScoreDisplay = document.getElementsByClassName("total-score")[0];
@@ -15,8 +16,7 @@ const topBtn = document.getElementsByClassName("arrow-top")[0];
 const rightBtn = document.getElementsByClassName("arrow-right")[0];
 const bottomBtn = document.getElementsByClassName("arrow-bottom")[0];
 const leftBtn = document.getElementsByClassName("arrow-left")[0];
-const guideText = document.getElementsByClassName("guide-text")[0];
-let boardWidth, boardArea, intervalTime;
+let boardWidth, boardArea;
 let totalScore = 0;
 let direction = 1;
 let speedIncrease = 0.8;
@@ -24,6 +24,7 @@ let appleIndex = 0;
 let currentSnake = [0, 1, 2];
 let tail = currentSnake[0];
 let head = currentSnake[currentSnake.length - 1];
+let intervalTime = 500;
 let movingIntervalId;
 
 const inputHide = () => {
@@ -53,10 +54,6 @@ const startBtnFade = () => {
   startBtn.style.opacity = 0;
   startBtn.style.pointerEvents = "none";
 };
-const startBtnAppear = () => {
-  startBtn.style.opacity = 1;
-  startBtn.style.pointerEvents = "initial";
-};
 
 // create grid based on user input.
 const generateGridIntoBoard = () => {
@@ -74,36 +71,17 @@ const generateGridIntoBoard = () => {
   boardAppear();
 };
 
-// create initial snake.
 const createSnake = () => {
   for (let cell of currentSnake) {
     cells[cell].classList.add("snake");
   }
 };
 
-//generate an apple
 const generateApple = () => {
   do {
     appleIndex = Math.floor(Math.random() * boardArea);
   } while (cells[appleIndex].classList.contains("snake"));
   cells[appleIndex].classList.add("apple");
-};
-
-const startGame = () => {
-  startBtnFade();
-  currentSnake.forEach((index) => cells[index].classList.remove("snake"));
-  cells[appleIndex].classList.remove("apple");
-  clearInterval(movingIntervalId);
-  totalScore = 0;
-  totalScoreDisplay.textContent = totalScore;
-  direction = 1;
-  intervalTime = 500;
-  currentSnake = [0, 1, 2];
-  createSnake();
-  generateApple();
-  tail = currentSnake[0];
-  head = currentSnake[currentSnake.length - 1];
-  movingIntervalId = setInterval(move, intervalTime);
 };
 
 const move = () => {
@@ -117,7 +95,7 @@ const move = () => {
   ) {
     finalScore.textContent = totalScore;
     if (totalScore < 10) {
-      modelMessage.textContent = "You don't even get 10 points...LMAO";
+      modelMessage.textContent = "You didn't even get 10 points...LMAO";
       modelImage.src = "./assets/lmao.webp";
     }
     if (totalScore >= 10) {
@@ -156,6 +134,13 @@ const move = () => {
   createSnake();
 };
 
+const startGame = () => {
+  startBtnFade();
+  createSnake();
+  generateApple();
+  movingIntervalId = setInterval(move, intervalTime);
+};
+
 //change snake's direction based on arrow that is pressed.
 document.addEventListener("keyup", (event) => {
   const code = event.keyCode;
@@ -165,6 +150,7 @@ document.addEventListener("keyup", (event) => {
   code === 40 ? (direction = boardWidth) : direction;
 });
 
+//change snake's direction based on arrow that is pressed.(For Mobile)
 controls.addEventListener("click", (event) => {
   event.target.classList.contains("arrow-right") ? (direction = 1) : direction;
   event.target.classList.contains("arrow-top") ? (direction = -boardWidth) : direction;
